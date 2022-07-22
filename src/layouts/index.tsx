@@ -1,4 +1,6 @@
 import { Link, Outlet } from 'umi';
+import { Button } from 'antd';
+import 'antd/dist/antd.less';
 import styles from './index.less';
 
 export default function Layout() {
@@ -11,6 +13,7 @@ export default function Layout() {
         <li>
           <Link to="/docs">Docs</Link>
         </li>
+        <li><Button>123123</Button></li>
         <li>
           <a href="https://github.com/umijs/umi">Github</a>
         </li>
