@@ -6,3 +6,5 @@
 /src/.umi-production
 /dist
 .idea/
+
+*.log

@@ -1105,6 +1105,11 @@
   resolved "https://registry.npmmirror.com/@types/json-schema/-/json-schema-7.0.11.tgz#d421b6c527a3037f7c84433fd2c4229e016863d3"
   integrity sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==
 
+"@types/lodash@^4.14.182":
+  version "4.14.182"
+  resolved "https://registry.npmmirror.com/@types/lodash/-/lodash-4.14.182.tgz#05301a4d5e62963227eaafe0ce04dd77c54ea5c2"
+  integrity sha512-/THyiqyQAP9AfARo4pF+aCGcyiQ94tX/Is2I7HofNRqoYLgN1PBoOWu2/zTA5zMxzP5EFutMtWtGAFRKUe961Q==
+
 "@types/mime@^1":
   version "1.3.2"
   resolved "https://registry.npmmirror.com/@types/mime/-/mime-1.3.2.tgz#93e25bf9ee75fe0fd80b594bc4feb0e862111b5a"
@@ -7217,11 +7222,6 @@ typescript@^4.1.2:
   version "4.7.4"
   resolved "https://registry.npmmirror.com/typescript/-/typescript-4.7.4.tgz#1a88596d1cf47d59507a1bcdfb5b9dfe4d488235"
   integrity sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==
-
-umi-plugin-redux-toolkit@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.npmmirror.com/umi-plugin-redux-toolkit/-/umi-plugin-redux-toolkit-2.2.0.tgz#219c48734c901a0d1e58bcddea3f2335815892ff"
-  integrity sha512-R+Znjxxi9pyGhzdQ+bDRPJHx7ZmdtNHiSZwH8D8tAjBQ6pPkf4LJBc4eK508ZNG5qi7nOOrBNC8IVMAeEWmjVA==
 
 umi@^4.0.8:
   version "4.0.8"

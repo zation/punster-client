@@ -1,7 +1,7 @@
 import * as fcl from '@onflow/fcl';
 import { contractHash } from './constants';
 
-export const create = async ({ description, ipfsURL }) => {
+export const create = async (description: string, ipfsURL: string) => {
   const transactionId = await fcl.mutate({
     cadence: `
 import PunstersNFT from ${contractHash}
@@ -29,7 +29,7 @@ transaction(description: String, ipfsURL: String) {
   return fcl.tx(transactionId).onceSealed()
 }
 
-export const upVote = async ({ address, duanjiId }) => {
+export const upVote = async (address: string, duanjiId: number) => {
   const transactionId = await fcl.mutate({
     cadence: `
 import PunstersNFT from ${contractHash}
@@ -54,7 +54,7 @@ transaction (ownerAddr: Address, duanjiID: UInt64) {
   return fcl.tx(transactionId).onceSealed()
 }
 
-export const cancelUpVote = async ({ address, duanjiId }) => {
+export const cancelUpVote = async (address: string, duanjiId: number) => {
   const transactionId = await fcl.mutate({
     cadence: `
 import PunstersNFT from ${contractHash}
@@ -80,7 +80,10 @@ transaction (ownerAddr: Address, duanjiID: UInt64) {
 }
 
 export const readFollowing = async () => {
-  const address = await fcl.currentUser.snapshot()
+  const { addr } = await fcl.currentUser.snapshot()
+  if (!addr) {
+    return [];
+  }
   return await fcl.query({
     cadence: `
 import PunstersNFT from ${contractHash}
@@ -94,7 +97,7 @@ pub fun main(addr: Address): AnyStruct? {
     return nil;
 }`,
     args: (arg, type) => [
-      arg(address, type.Address),
+      arg(addr, type.Address),
     ],
   })
 };

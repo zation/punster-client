@@ -1,7 +1,19 @@
-import * as fcl from '@onflow/fcl'
-import { contractHash } from './constants'
+import * as fcl from '@onflow/fcl';
+import type { Punster } from '@/models/punster';
+import { contractHash } from './constants';
+import { fetchJSON } from './ipfs';
 
-export const register = async ({ description, ipfsURL }) => {
+export interface PunsterResource {
+  id: number
+  owner: string
+  description: string
+  ipfsUrl: string
+  funnyIndex: number
+  followings: [string]
+  followers: [string]
+}
+
+export const register = async (description: string, ipfsURL: string) => {
   const transactionId = await fcl.mutate({
     cadence: `
 import PunstersNFT from ${contractHash}
@@ -58,7 +70,7 @@ transaction () {
   return fcl.tx(transactionId).onceSealed()
 }
 
-export const follow = async ({ address }) => {
+export const follow = async (address: string) => {
   const transactionId = await fcl.mutate({
     cadence: `
 import PunstersNFT from ${contractHash}
@@ -82,7 +94,7 @@ transaction (followingAddr: Address) {
   return fcl.tx(transactionId).onceSealed()
 }
 
-export const unFollow = async ({ address }) => {
+export const unFollow = async (address: string) => {
   const transactionId = await fcl.mutate({
     cadence: `
 import PunstersNFT from ${contractHash}
@@ -106,10 +118,11 @@ transaction (followingAddr: Address) {
   return fcl.tx(transactionId).onceSealed()
 }
 
-export const readMine = async () => {
-  const { addr } = await fcl.currentUser.snapshot()
-  console.log(addr)
-  return await fcl.query({
+export const readOne = async (address: string | null | undefined): Promise<Punster | null> => {
+  if (!address) {
+    return null;
+  }
+  const resource = await fcl.query({
     cadence: `
 import PunstersNFT from ${contractHash}
 
@@ -122,13 +135,23 @@ pub fun main(addr: Address): AnyStruct? {
     return nil;
 }`,
     args: (arg, type) => [
-      arg(addr, type.Address),
+      arg(address, type.Address),
     ],
-  })
+  }) as PunsterResource;
+  const data = await fetchJSON(resource.ipfsUrl);
+  return { ...resource, ...data };
 };
 
-export const readFollowers = async () => {
-  const address = await fcl.currentUser.snapshot()
+export const readMine = async () => {
+  const { addr } = await fcl.currentUser.snapshot();
+  return readOne(addr);
+};
+
+export const readMineFollowers = async () => {
+  const { addr } = await fcl.currentUser.snapshot()
+  if (!addr) {
+    return [];
+  }
   return await fcl.query({
     cadence: `
 import PunstersNFT from ${contractHash}
@@ -141,13 +164,16 @@ pub fun main(addr: Address): [Address]? {
     return nil;
 }`,
     args: (arg, type) => [
-      arg(address, type.Address),
+      arg(addr, type.Address),
     ],
-  })
+  });
 };
 
-export const readFollowings = async () => {
-  const address = await fcl.currentUser.snapshot()
+export const readMineFollowings = async () => {
+  const { addr } = await fcl.currentUser.snapshot()
+  if (!addr) {
+    return [];
+  }
   return await fcl.query({
     cadence: `
 import PunstersNFT from ${contractHash}
@@ -160,7 +186,7 @@ pub fun main(addr: Address): [Address]? {
     return nil;
 }`,
     args: (arg, type) => [
-      arg(address, type.Address),
+      arg(addr, type.Address),
     ],
-  })
+  });
 };
