@@ -1,5 +1,6 @@
 import { Outlet } from 'umi';
 import Header from './header';
+import Footer from './footer';
 import s from './index.less';
 import './global.less';
 import {
@@ -17,6 +18,7 @@ export default function Layout() {
           <Outlet />
         </Col>
       </Row>
+      <Footer />
     </div>
   );
 }
