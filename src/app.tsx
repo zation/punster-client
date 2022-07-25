@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import * as fcl from '@onflow/fcl';
 import { Provider } from 'react-redux';
 import store from '@/models/store';
-import { readMine, readAll } from '@/models/punster';
+import { readMine, readAll, readMineFollowings } from '@/models/punster';
 
 const { dispatch } = store;
 
@@ -19,6 +19,7 @@ fcl.currentUser.subscribe(async (user) => {
 });
 
 dispatch(readAll());
+dispatch(readMineFollowings());
 
 export function rootContainer(container: ReactNode[]) {
   return (

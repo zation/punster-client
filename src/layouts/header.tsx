@@ -16,34 +16,23 @@ import {
 } from 'antd';
 import { useNavigate } from 'umi';
 import {
-  selectEntities,
   logout,
 } from '@/models/auth';
 import {
-  selectors as punsterSelectors,
   destroy,
   readMine,
 } from '@/models/punster';
 import {
-  RootState,
   useAppDispatch,
 } from '@/models/store';
 import Avatar from '@/components/avatar';
 import * as fcl from '@onflow/fcl'
-import { useSelector } from 'react-redux';
 import { isRejected } from '@reduxjs/toolkit';
+import { Punster } from '@/services/punster';
 
 import s from './header.less';
 
 const { confirm } = Modal;
-
-const selector = (state: RootState) => {
-  const { isLogin, punsterId } = selectEntities(state);
-  return {
-    isLogin,
-    punster: punsterId ? punsterSelectors.selectById(state, punsterId) : null,
-  };
-};
 
 const menuItems = [{
   key: 'logout',
@@ -53,11 +42,13 @@ const menuItems = [{
   label: 'Destroy',
 }];
 
-export default function Header() {
-  const {
-    isLogin,
-    punster,
-  } = useSelector(selector);
+export interface HeaderProps {
+  currentPunster?: Punster
+}
+
+export default function Header({
+  currentPunster,
+}: HeaderProps) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -108,7 +99,7 @@ export default function Header() {
           </Col>
           <Col span={14}>
             <div className={s.ButtonContainer}>
-              {isLogin && (
+              {currentPunster && (
                 <Button
                   type="primary"
                   size="large"
@@ -120,11 +111,11 @@ export default function Header() {
             </div>
           </Col>
           <Col span={5}>
-            {isLogin && punster ? (
+            {currentPunster ? (
               <Dropdown overlay={menu}>
                 <Space className={s.UserContainer}>
-                  {<Avatar className={s.Avatar} avatarHash={punster.avatarHash} />}
-                  {punster.nickname}
+                  {<Avatar className={s.Avatar} avatarHash={currentPunster.avatarHash} />}
+                  {currentPunster.nickname}
                 </Space>
               </Dropdown>
             ) : (

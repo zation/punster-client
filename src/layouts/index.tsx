@@ -1,47 +1,58 @@
-import React, { ReactNode } from 'react';
+import React, {
+  ReactNode,
+} from 'react';
 import {
   Outlet,
-  Link,
 } from 'umi';
 import {
   useAppSelector,
   RootState,
 } from '@/models/store';
-import { selectors } from '@/models/punster';
-import { Punster } from '@/services/punster';
+import {
+  selectors,
+  selectors as punsterSelectors,
+} from '@/models/punster';
+import { Punster as PunsterModel } from '@/services/punster';
 import { map } from 'lodash/fp';
 import {
   Col,
   Row,
   Affix,
 } from 'antd';
-import Avatar from '@/components/avatar';
 import Header from './header';
 import Footer from './footer';
+import Punster from './punster';
 import s from './index.less';
 import './global.less';
+import { selectEntities } from '@/models/auth';
 
-const selector = (state: RootState) => ({
-  punsters: selectors.selectAll(state),
-});
+const selector = (state: RootState) => {
+  const { punsterId } = selectEntities(state);
+  return {
+    punsters: selectors.selectAll(state),
+    currentPunster: punsterId ? punsterSelectors.selectById(state, punsterId) : null,
+  };
+};
 
 export default function Layout() {
-  const { punsters } = useAppSelector(selector);
+  const {
+    punsters,
+    currentPunster,
+  } = useAppSelector(selector);
 
   return (
     <div>
-      <Header />
+      <Header currentPunster={currentPunster} />
       <Row className={s.ContentContainer}>
         <Col span={5}>
           <Affix offsetTop={80}>
             <div className={s.Punsters}>
-              {map<Punster, ReactNode>(({ nickname, id, avatarHash }) => (
-                <div className={s.Punter} key={id}>
-                  <Avatar className={s.Avatar} avatarHash={avatarHash} />
-                  <Link className={s.Punter} key={id} to={`/punster/${id}`}>
-                    {nickname}
-                  </Link>
-                </div>
+              {map<PunsterModel, ReactNode>((punster) => (
+                <Punster
+                  punster={punster}
+                  key={punster.id}
+                  followings={currentPunster?.followings}
+                />
               ))(punsters)}
             </div>
           </Affix>
