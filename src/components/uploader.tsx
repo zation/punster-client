@@ -1,6 +1,5 @@
 import React from 'react';
-import { Upload } from 'antd';
-import { UploadProps } from 'antd/lib/upload/interface';
+import { Upload, UploadProps } from 'antd';
 
 export default function Uploader({ onChange, showUploadList, maxCount }: Pick<UploadProps, 'onChange' | 'showUploadList' | 'maxCount'>) {
   return (

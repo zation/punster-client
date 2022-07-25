@@ -22,7 +22,7 @@ import {
 
 const { Item } = Form;
 
-interface Fields {
+interface Values {
   nickname: string
   avatar: UploadChangeParam<UploadFile<string>>
 }
@@ -30,7 +30,7 @@ interface Fields {
 export default function Register() {
   const [submitting, setSubmitting] = useState(false)
   const dispatch = useAppDispatch();
-  const onSubmit = useCallback(async ({ nickname, avatar }: Fields) => {
+  const onSubmit = useCallback(async ({ nickname, avatar }: Values) => {
     setSubmitting(true)
     try {
       const result = await dispatch(register({
@@ -49,11 +49,11 @@ export default function Register() {
   }, [])
 
   return (
-    <Form<Fields> onFinish={onSubmit}>
-      <Item label="昵称" name="nickname">
+    <Form<Values> onFinish={onSubmit}>
+      <Item label="Nickname" name="nickname" rules={[{ required: true }]}>
         <Input />
       </Item>
-      <Item label="头像" name="avatar">
+      <Item label="Avatar" name="avatar" rules={[{ required: true }]}>
         <Uploader maxCount={1} />
       </Item>
       <Item>

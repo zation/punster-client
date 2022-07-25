@@ -4,11 +4,11 @@ import { contractHash } from './constants';
 import { fetchJSON } from './ipfs';
 
 export interface PunsterResource {
-  id: number
+  id: string
   owner: string
   description: string
   ipfsUrl: string
-  funnyIndex: number
+  funnyIndex: string
   followings: [string]
   followers: [string]
 }
