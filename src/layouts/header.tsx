@@ -28,7 +28,7 @@ import {
   RootState,
   useAppDispatch,
 } from '@/models/store';
-import Image from '@/components/ipfs-image';
+import Avatar from '@/components/avatar';
 import * as fcl from '@onflow/fcl'
 import { useSelector } from 'react-redux';
 import { isRejected } from '@reduxjs/toolkit';
@@ -120,11 +120,11 @@ export default function Header() {
             </div>
           </Col>
           <Col span={5}>
-            {isLogin ? (
+            {isLogin && punster ? (
               <Dropdown overlay={menu}>
                 <Space className={s.UserContainer}>
-                  {punster?.avatarHash && <Image className={s.Avatar} hash={punster.avatarHash} />}
-                  {punster?.nickname}
+                  {<Avatar className={s.Avatar} avatarHash={punster.avatarHash} />}
+                  {punster.nickname}
                 </Space>
               </Dropdown>
             ) : (

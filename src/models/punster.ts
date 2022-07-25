@@ -8,17 +8,13 @@ import { uploadJSON } from '@/services/ipfs';
 import {
   destroy as destroyService,
   readMine as readMineService,
+  readAll as readAllService,
   register as registerService,
-  PunsterResource,
+  Punster,
 } from '@/services/punster';
 import { prop } from 'lodash/fp';
 import { selectEntities as selectAuthEntities } from './auth';
 import type { RootState } from './store';
-
-export interface Punster extends PunsterResource {
-  nickname: string
-  avatarHash: string
-}
 
 const adapter = createEntityAdapter<Punster>();
 const namespace = 'punster';
@@ -51,11 +47,19 @@ export const readMine = createAsyncThunk(
   async () => readMineService(),
 );
 
+export const readAll = createAsyncThunk(
+  `${namespace}/readAll`,
+  async () => readAllService(),
+);
+
 const reducer = createReducer(adapter.getInitialState(), (builder) => {
   builder.addCase(destroy.fulfilled, (state, { payload: { punsterId } }) => {
     if (punsterId) {
       adapter.removeOne(state, punsterId);
     }
+  });
+  builder.addCase(readAll.fulfilled, (state, { payload }) => {
+    adapter.setAll(state, payload);
   });
   builder.addMatcher(isAnyOf(register.fulfilled, readMine.fulfilled), (state, { payload }) => {
     if (payload !== null) {

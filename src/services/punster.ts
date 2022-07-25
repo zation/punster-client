@@ -1,7 +1,8 @@
 import * as fcl from '@onflow/fcl';
-import type { Punster } from '@/models/punster';
+import { map, flow, values } from 'lodash/fp';
 import { contractHash } from './constants';
 import { fetchJSON } from './ipfs';
+import { compact } from 'lodash';
 
 export interface PunsterResource {
   id: string
@@ -12,6 +13,13 @@ export interface PunsterResource {
   followings: [string]
   followers: [string]
 }
+
+export interface PunsterIPFS {
+  nickname: string
+  avatarHash: string
+}
+
+export type Punster = PunsterResource & PunsterIPFS;
 
 export const register = async (description: string, ipfsURL: string) => {
   const transactionId = await fcl.mutate({
@@ -138,13 +146,29 @@ pub fun main(addr: Address): AnyStruct? {
       arg(address, type.Address),
     ],
   }) as PunsterResource;
-  const data = await fetchJSON(resource.ipfsUrl);
+  const data = await fetchJSON(resource.ipfsUrl) as PunsterIPFS;
   return { ...resource, ...data };
 };
 
 export const readMine = async () => {
   const { addr } = await fcl.currentUser.snapshot();
   return readOne(addr);
+};
+
+export const readAll = async (): Promise<Punster[]> => {
+  const responses = await fcl.query({
+    cadence: `
+import PunstersNFT from ${contractHash}
+
+pub fun main(): {UInt64: Address} {
+    return PunstersNFT.getRegisteredPunsters();
+}`}) as Record<string, string>;
+
+  const results = await Promise.all(flow(
+    values,
+    map<string, Promise<Punster | null>>((address) => readOne(address)),
+  )(responses));
+  return compact(results);
 };
 
 export const readMineFollowers = async () => {

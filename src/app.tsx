@@ -2,7 +2,9 @@ import { ReactNode } from 'react';
 import * as fcl from '@onflow/fcl';
 import { Provider } from 'react-redux';
 import store from '@/models/store';
-import { readMine } from '@/models/punster';
+import { readMine, readAll } from '@/models/punster';
+
+const { dispatch } = store;
 
 fcl.config({
   'accessNode.api': 'https://rest-testnet.onflow.org',
@@ -12,9 +14,11 @@ fcl.config({
 
 fcl.currentUser.subscribe(async (user) => {
   if (user.loggedIn) {
-    await store.dispatch(readMine());
+    await dispatch(readMine());
   }
 });
+
+dispatch(readAll());
 
 export function rootContainer(container: ReactNode[]) {
   return (
