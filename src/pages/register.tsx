@@ -2,6 +2,7 @@ import {
   Button,
   Form,
   Input,
+  message,
 } from 'antd';
 import Uploader from '@/components/uploader';
 import {
@@ -19,6 +20,8 @@ import {
   flow,
   prop,
 } from 'lodash/fp';
+import s from './register.less';
+import { useNavigate } from 'umi';
 
 const { Item } = Form;
 
@@ -29,11 +32,13 @@ interface Values {
 
 export default function Register() {
   const [submitting, setSubmitting] = useState(false)
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
   const onSubmit = useCallback(async ({ nickname, avatar }: Values) => {
     setSubmitting(true)
     try {
-      const result = await dispatch(register({
+      await dispatch(register({
         nickname,
         avatarHash: flow(
           prop('fileList'),
@@ -41,23 +46,30 @@ export default function Register() {
           prop('response.Hash'),
         )(avatar),
       }));
-      console.log('in submit', result);
     } catch (e) {
       console.error(e);
     }
-    setSubmitting(false)
-  }, [])
+    setSubmitting(false);
+    message.success('Register success.');
+    navigate('/');
+  }, [setSubmitting, navigate, dispatch]);
 
   return (
-    <Form<Values> onFinish={onSubmit}>
+    <Form<Values>
+      onFinish={onSubmit}
+      labelCol={{ span: 4 }}
+      wrapperCol={{ span: 14 }}
+      className={s.Root}
+    >
+      <h3>Register New Punster</h3>
       <Item label="Nickname" name="nickname" rules={[{ required: true }]}>
         <Input />
       </Item>
       <Item label="Avatar" name="avatar" rules={[{ required: true }]}>
         <Uploader maxCount={1} />
       </Item>
-      <Item>
-        <Button htmlType="submit" loading={submitting}>Submit</Button>
+      <Item wrapperCol={{ offset: 4, span: 8 }}>
+        <Button htmlType="submit" type="primary" block loading={submitting}>Submit</Button>
       </Item>
     </Form>
   );

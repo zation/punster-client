@@ -13,9 +13,11 @@ export default function Layout() {
   return (
     <div>
       <Header />
-      <Row className={s.Content} align="middle">
+      <Row align="middle" className={s.ContentContainer}>
         <Col span={14} offset={5}>
-          <Outlet />
+          <div className={s.Content}>
+            <Outlet />
+          </div>
         </Col>
       </Row>
       <Footer />

@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import s from './footer.less';
 
 export interface FooterProps {
-  className: string
+  className?: string
 }
 
 export default function Footer ({ className }: FooterProps) {

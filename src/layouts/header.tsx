@@ -12,6 +12,7 @@ import {
   Menu,
   Modal,
   Space,
+  message,
 } from 'antd';
 import { useNavigate } from 'umi';
 import {
@@ -64,19 +65,21 @@ export default function Header() {
 
   const onLogoClick = useCallback(() => {
     navigate('/');
-  }, []);
+  }, [navigate]);
   const onLoginOrRegister = useCallback(async () => {
     setLoading(true);
     await fcl.authenticate();
     const action = await dispatch(readMine());
     if (isRejected(action)) {
       navigate('/register');
+    } else {
+      message.success('Login success.');
     }
     setLoading(false);
-  }, []);
+  }, [navigate, setLoading]);
   const onCreate = useCallback(() => {
     navigate('/create');
-  }, []);
+  }, [navigate]);
 
   const menu = useMemo(() => (
     <Menu
