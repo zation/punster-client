@@ -12,8 +12,6 @@ export interface PunsterResource {
   funnyIndex: string
   followings: [string]
   followers: [string]
-
-  address: string
 }
 
 export interface PunsterIPFS {
@@ -148,8 +146,8 @@ pub fun main(addr: Address): AnyStruct? {
       arg(address, type.Address),
     ],
   }) as PunsterResource;
-  const data = await fetchJSON(resource.ipfsUrl) as PunsterIPFS;
-  return { ...resource, ...data, address };
+  const data = await fetchJSON<PunsterIPFS>(resource.ipfsUrl);
+  return { ...resource, ...data };
 };
 
 export const readMine = async () => {

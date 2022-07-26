@@ -31,7 +31,7 @@ export default function Punster({
     avatarHash,
     id,
     nickname,
-    address,
+    owner,
   },
   followings,
 }: PunsterProps) {
@@ -39,18 +39,18 @@ export default function Punster({
   const [loading, setLoading] = useState(false);
   const onFollow = useCallback(async () => {
     setLoading(true);
-    await dispatch(follow(address));
+    await dispatch(follow(owner));
     await dispatch(readAll());
     message.success('Follow success.');
     setLoading(false);
-  }, [address]);
+  }, [owner]);
   const onUnFollow = useCallback(async () => {
     setLoading(true);
-    await dispatch(unFollow(address));
+    await dispatch(unFollow(owner));
     await dispatch(readAll());
     message.success('UnFollow success.');
     setLoading(false);
-  }, [address]);
+  }, [owner]);
 
   return (
     <div className={s.Root}>
@@ -58,7 +58,7 @@ export default function Punster({
       <Link className={s.Link} to={`/punster/${id}`}>
         {nickname}
       </Link>
-      {includes(address)(followings) ? (
+      {includes(owner)(followings) ? (
         <Button
           onClick={onUnFollow}
           loading={loading}

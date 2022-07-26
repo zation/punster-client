@@ -6,11 +6,13 @@ import {
 } from 'react-redux'
 import auth from './auth';
 import punster from './punster';
+import duanji from './duanji';
 
 const store = configureStore({
   reducer: {
     ...auth,
     ...punster,
+    ...duanji,
   },
 });
 

@@ -43,7 +43,7 @@ const menuItems = [{
 }];
 
 export interface HeaderProps {
-  currentPunster?: Punster
+  currentPunster?: Punster | null
 }
 
 export default function Header({

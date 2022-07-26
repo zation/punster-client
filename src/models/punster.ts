@@ -14,6 +14,7 @@ import {
   follow as followService,
   unFollow as unFollowService,
   Punster,
+  PunsterIPFS,
 } from '@/services/punster';
 import { prop } from 'lodash/fp';
 import { selectEntities as selectAuthEntities } from './auth';
@@ -23,14 +24,9 @@ const adapter = createEntityAdapter<Punster>();
 const namespace = 'punster';
 export const selectors = adapter.getSelectors<RootState>(prop(namespace));
 
-interface RegisterParams {
-  avatarHash: string
-  nickname: string
-}
-
 export const register = createAsyncThunk(
   `${namespace}/register`,
-  async ({ avatarHash, nickname }: RegisterParams) => {
+  async ({ avatarHash, nickname }: PunsterIPFS) => {
     const { Hash } = await uploadJSON({ avatarHash, nickname });
     await registerService('', Hash);
     return await readMineService();
