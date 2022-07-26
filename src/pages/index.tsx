@@ -2,28 +2,26 @@ import { ReactNode } from 'react';
 import Duanji from '@/components/duanji';
 import { selectors, Duanji as DuanjiModel } from '@/models/duanji';
 import { selectEntities } from '@/models/auth';
-import { selectors as punsterSelectors } from '@/models/punster';
+import { selectors as punsterSelectors, Punster } from '@/models/punster';
 import { RootState } from '@/models/store';
 import { useSelector } from 'react-redux';
-import { map, flow, find, propEq, prop } from 'lodash/fp';
+import { map, flow, find, propEq } from 'lodash/fp';
 
 interface DuanjiDisplay extends DuanjiModel {
-  ownerNickname: string
+  punster: Punster
 }
 
 const selector = (state: RootState) => {
   const punsters = punsterSelectors.selectAll(state);
+  const { punsterId } = selectEntities(state);
 
   return {
-    currentPunsterAddress: selectEntities(state).punsterAddress,
+    currentPunster: punsterId ? punsterSelectors.selectById(state, punsterId) : undefined,
     duanjis: flow(
       selectors.selectAll,
       map<DuanjiModel, DuanjiDisplay>((duanji) => ({
         ...duanji,
-        ownerNickname: flow(
-          find(propEq('owner', duanji.owner)),
-          prop('nickname'),
-        )(punsters),
+        punster: find(propEq('owner', duanji.owner))(punsters),
       })),
     )(state),
   };
@@ -32,17 +30,17 @@ const selector = (state: RootState) => {
 export default function HomePage() {
   const {
     duanjis,
-    currentPunsterAddress,
+    currentPunster,
   } = useSelector(selector);
 
   return (
     <div>
-      {map<DuanjiDisplay, ReactNode>(({ ownerNickname, ...duanji }) => (
+      {map<DuanjiDisplay, ReactNode>(({ punster, ...duanji }) => (
         <Duanji
           key={duanji.id}
           duanji={duanji}
-          currentPunsterAddress={currentPunsterAddress}
-          ownerNickname={ownerNickname}
+          currentPunster={currentPunster}
+          punster={punster}
         />
       ))(duanjis)}
     </div>

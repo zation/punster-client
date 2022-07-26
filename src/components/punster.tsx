@@ -17,13 +17,16 @@ import {
   Button,
   message,
 } from 'antd';
-import { includes } from 'lodash/fp';
+import { includes, size } from 'lodash/fp';
+import classNames from 'classnames';
 
 import s from './punster.less';
 
 export interface PunsterProps {
   punster: PunsterModel
-  followings?: string[]
+  currentPunsterFollowings?: string[]
+  showFollowInfo?: boolean
+  className?: string
 }
 
 export default function Punster({
@@ -32,8 +35,12 @@ export default function Punster({
     id,
     nickname,
     owner,
+    followings,
+    followers,
   },
-  followings,
+  className,
+  currentPunsterFollowings,
+  showFollowInfo = false,
 }: PunsterProps) {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
@@ -53,17 +60,27 @@ export default function Punster({
   }, [owner]);
 
   return (
-    <div className={s.Root}>
+    <div className={classNames(s.Root, className)}>
       <Avatar className={s.Avatar} avatarHash={avatarHash} />
-      <Link className={s.Link} to={`/punster/${id}`}>
-        {nickname}
-      </Link>
-      {includes(owner)(followings) ? (
+      <div className={s.Info}>
+        <div>
+          <Link to={`/punster/${id}`}>
+            {nickname}
+          </Link>
+        </div>
+        {showFollowInfo && (
+          <>
+            <div className={s.FollowInfo}><b>{size(followings)}</b> Following</div>
+            <div className={s.FollowInfo}><b>{size(followers)}</b> Followers</div>
+          </>
+        )}
+      </div>
+      {includes(owner)(currentPunsterFollowings) ? (
         <Button
           onClick={onUnFollow}
           loading={loading}
         >
-          {!loading && 'unFollow'}
+          {!loading && 'Unfollow'}
         </Button>
       ) : (
         <Button

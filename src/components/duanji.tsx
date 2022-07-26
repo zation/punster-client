@@ -14,6 +14,7 @@ import {
 import {
   message,
   Spin,
+  Dropdown,
 } from 'antd';
 import classNames from 'classnames';
 import parseISO from 'date-fns/fp/parseISO';
@@ -24,11 +25,9 @@ import {
   cancelUpVote,
   Duanji as DuanjiModel,
 } from '@/models/duanji';
-// import {
-//   follow,
-//   unFollow,
-// } from '@/models/punster';
+import Punster from './punster';
 import Image from './ipfs-image';
+import { Punster as PunsterModel } from '@/models/punster';
 import { useAppDispatch } from '@/models/store';
 
 import s from './duanji.less';
@@ -52,8 +51,8 @@ const time = ({
 
 export interface DuanjiProps {
   duanji: DuanjiModel
-  currentPunsterAddress?: string | null
-  ownerNickname: string
+  currentPunster?: PunsterModel
+  punster: PunsterModel
 }
 
 export default function Duanji({
@@ -67,30 +66,30 @@ export default function Duanji({
     funnyIndex,
     createdAt,
   },
-  ownerNickname,
-  currentPunsterAddress,
+  punster,
+  currentPunster,
 }: DuanjiProps) {
   const dispatch = useAppDispatch();
-  const isUpVoted = includes(currentPunsterAddress)(commends);
+  const isUpVoted = includes(currentPunster?.owner)(commends);
   const [isVoting, setIsVoting] = useState(false);
 
   const onUpVote = useCallback(async () => {
-    if (!currentPunsterAddress) {
+    if (!currentPunster) {
       message.error('Please login or register');
     }
     setIsVoting(true);
     await dispatch(upVote({ id, owner }));
     setIsVoting(false);
-  }, [owner, id, setIsVoting, dispatch, currentPunsterAddress]);
+  }, [owner, id, setIsVoting, dispatch, currentPunster]);
 
   const onCancelUpVote = useCallback(async () => {
-    if (!currentPunsterAddress) {
+    if (!currentPunster) {
       message.error('Please login or register');
     }
     setIsVoting(true);
     await dispatch(cancelUpVote({ id, owner }));
     setIsVoting(false);
-  }, [owner, id, setIsVoting, dispatch, currentPunsterAddress]);
+  }, [owner, id, setIsVoting, dispatch, currentPunster]);
 
   return (
     <div className={s.Root}>
@@ -109,7 +108,21 @@ export default function Duanji({
 
       <div className={s.Main}>
         <div>
-          <span className={s.Address}>{ownerNickname}</span>
+          {punster && (
+            <span className={s.PunsterContainer}>
+              <Dropdown
+                overlay={(
+                  <Punster
+                    className={s.Punster}
+                    punster={punster}
+                    currentPunsterFollowings={currentPunster?.followings}
+                    showFollowInfo
+                  />
+                )}>
+              <span className={s.Nickname}>{punster.nickname}</span>
+              </Dropdown>
+            </span>
+          )}
           <span className={s.lighten}>Created</span>: {time()(createdAt)}
         </div>
         <div className={s.Title}>{title}</div>

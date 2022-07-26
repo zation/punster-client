@@ -15,26 +15,6 @@
     cursor: pointer;
   }
 
-  .hot {
-    color: @success-color;
-  }
-
-  .UpIcon {
-    &.active,
-    &:hover {
-      color: @primary-color;
-    }
-  }
-
-  .DownIcon {
-    transform: rotate(180deg);
-
-    &.active,
-    &:hover {
-      color: @red-8;
-    }
-  }
-
   .Number {
     font-size: 24px;
     font-weight: 700;
@@ -52,10 +32,18 @@
   margin-bottom: 10px;
 }
 
-.Address {
+.Nickname {
   color: @primary-color;
   cursor: pointer;
   margin-right: 10px;
+  position: relative;
+}
+
+.Punster {
+  background: white;
+  width: 280px;
+  border: 1px solid #e4e6e6;
+  padding: 10px;
 }
 
 .lighten {

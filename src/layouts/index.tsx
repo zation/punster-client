@@ -19,12 +19,12 @@ import {
   Row,
   Affix,
 } from 'antd';
+import Punster from '@/components/punster';
+import { selectEntities } from '@/models/auth';
 import Header from './header';
 import Footer from './footer';
-import Punster from './punster';
 import s from './index.less';
 import './global.less';
-import { selectEntities } from '@/models/auth';
 
 const selector = (state: RootState) => {
   const { punsterId } = selectEntities(state);
@@ -51,7 +51,7 @@ export default function Layout() {
                 <Punster
                   punster={punster}
                   key={punster.id}
-                  followings={currentPunster?.followings}
+                  currentPunsterFollowings={currentPunster?.followings}
                 />
               ))(punsters)}
             </div>
