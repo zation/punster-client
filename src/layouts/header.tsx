@@ -21,6 +21,7 @@ import {
 import {
   destroy,
   readMine,
+  Punster,
 } from '@/models/punster';
 import {
   useAppDispatch,
@@ -28,7 +29,6 @@ import {
 import Avatar from '@/components/avatar';
 import * as fcl from '@onflow/fcl'
 import { isRejected } from '@reduxjs/toolkit';
-import { Punster } from '@/services/punster';
 
 import s from './header.less';
 

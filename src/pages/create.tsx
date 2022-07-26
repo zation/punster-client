@@ -47,6 +47,7 @@ export default function Create() {
           prop('fileList'),
           map(prop('response.Hash')),
         )(images),
+        createdAt: new Date().toISOString(),
       }));
     } catch (e) {
       console.error(e);

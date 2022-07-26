@@ -11,8 +11,8 @@ import {
 import {
   selectors,
   selectors as punsterSelectors,
+  Punster as PunsterModel,
 } from '@/models/punster';
-import { Punster as PunsterModel } from '@/services/punster';
 import { map } from 'lodash/fp';
 import {
   Col,

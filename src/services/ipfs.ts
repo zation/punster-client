@@ -1,4 +1,4 @@
-export const uploadJSON = async (data: Record<string, any>) => {
+export async function uploadJSON<Params = Record<string, any>>(data: Params) {
   const formData = new FormData()
   const blob = new Blob([JSON.stringify(data)], { type: 'application/json' })
   formData.append('file', blob, 'data.json')

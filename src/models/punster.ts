@@ -20,6 +20,12 @@ import { prop } from 'lodash/fp';
 import { selectEntities as selectAuthEntities } from './auth';
 import type { RootState } from './store';
 
+export type {
+  Punster,
+  PunsterIPFS,
+  PunsterResource,
+} from '@/services/punster';
+
 const adapter = createEntityAdapter<Punster>();
 const namespace = 'punster';
 export const selectors = adapter.getSelectors<RootState>(prop(namespace));
@@ -27,7 +33,7 @@ export const selectors = adapter.getSelectors<RootState>(prop(namespace));
 export const register = createAsyncThunk(
   `${namespace}/register`,
   async ({ avatarHash, nickname }: PunsterIPFS) => {
-    const { Hash } = await uploadJSON({ avatarHash, nickname });
+    const { Hash } = await uploadJSON<PunsterIPFS>({ avatarHash, nickname });
     await registerService('', Hash);
     return await readMineService();
   },
@@ -35,9 +41,9 @@ export const register = createAsyncThunk(
 
 export const destroy = createAsyncThunk<{ punsterId: string | null }, void, { state: RootState }>(
   `${namespace}/destroy`,
-  async (_, thunkAPI) => {
+  async (_, { getState }) => {
     await destroyService();
-    return { punsterId: selectAuthEntities(thunkAPI.getState()).punsterId };
+    return { punsterId: selectAuthEntities(getState()).punsterId };
   },
 );
 

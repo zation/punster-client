@@ -4,7 +4,6 @@ import React, {
 } from 'react';
 import Avatar from '@/components/avatar';
 import { Link } from 'umi';
-import { Punster as PunsterModel } from '@/services/punster';
 import {
   useAppDispatch,
 } from '@/models/store';
@@ -12,6 +11,7 @@ import {
   follow,
   unFollow,
   readAll,
+  Punster as PunsterModel,
 } from '@/models/punster';
 import {
   Button,

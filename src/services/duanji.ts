@@ -17,6 +17,7 @@ export interface DuanjiIPFS {
   title: string
   content: string
   imageHashes: string[]
+  createdAt: string
 }
 
 export type Duanji = DuanjiIPFS & DuanjiResource
@@ -56,7 +57,7 @@ transaction(description: String, ipfsURL: String) {
   return fcl.tx(transactionId).onceSealed()
 }
 
-export const upVote = async (address: string, duanjiId: number) => {
+export const upVote = async (address: string, duanjiId: string) => {
   const transactionId = await fcl.mutate({
     cadence: `
 import PunstersNFT from ${contractHash}
@@ -81,7 +82,7 @@ transaction (ownerAddr: Address, duanjiID: UInt64) {
   return fcl.tx(transactionId).onceSealed()
 }
 
-export const cancelUpVote = async (address: string, duanjiId: number) => {
+export const cancelUpVote = async (address: string, duanjiId: string) => {
   const transactionId = await fcl.mutate({
     cadence: `
 import PunstersNFT from ${contractHash}
@@ -115,13 +116,12 @@ export const readFollowing = async () => {
     cadence: `
 import PunstersNFT from ${contractHash}
 
-pub fun main(addr: Address): AnyStruct? {
-    
+pub fun main(addr: Address): [PunstersNFT.DuanjiView] {
     if let punsterRef = PunstersNFT.getIPunsterFromAddress(addr: addr) {
-        return punsterRef.getPunsterView();
+        return punsterRef.getAllFollowingDuanji();
     }
     
-    return nil;
+    return [];
 }`,
     args: (arg, type) => [
       arg(addr, type.Address),
@@ -192,5 +192,20 @@ export const readMine = async () => {
     return [];
   }
   return readByAddress(addr);
+};
+
+export const readFunnyIndex = async (address: string, id: string) => {
+  return await fcl.query({
+    cadence: `
+import PunstersNFT from ${contractHash}
+
+pub fun main(addr: Address, id: UInt64): UInt32? {
+    return PunstersNFT.getDuanjiFunnyIndex(ownerAddr: addr, duanjiID: id);
+}`,
+    args: (arg, type) => [
+      arg(address, type.Address),
+      arg(id, type.UInt64),
+    ],
+  }) as Promise<string>;
 };
 

@@ -1,0 +1,80 @@
+@import '@/styles/varaibles';
+
+.Root {
+  display: flex;
+  padding: 30px;
+  border-bottom: 1px solid #e4e6e6;
+}
+
+.Numbers {
+  text-align: center;
+  color: #677075;
+
+  .FunnyIndex {
+    font-size: 36px;
+    cursor: pointer;
+  }
+
+  .hot {
+    color: @success-color;
+  }
+
+  .UpIcon {
+    &.active,
+    &:hover {
+      color: @primary-color;
+    }
+  }
+
+  .DownIcon {
+    transform: rotate(180deg);
+
+    &.active,
+    &:hover {
+      color: @red-8;
+    }
+  }
+
+  .Number {
+    font-size: 24px;
+    font-weight: 700;
+  }
+}
+
+.Main {
+  flex: 1;
+  position: relative;
+  margin-left: 20px;
+}
+
+.Image {
+  max-width: 100%;
+  margin-bottom: 10px;
+}
+
+.Address {
+  color: @primary-color;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.lighten {
+  color: #7c7f85;
+  font-size: 12px;
+}
+
+.Title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+.Content {
+  line-height: 2;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.Images {
+  margin-bottom: 10px;
+}
