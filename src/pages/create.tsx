@@ -20,7 +20,6 @@ import {
   map,
   prop,
 } from 'lodash/fp';
-import s from './register.less';
 import { useNavigate } from 'umi';
 
 const { Item } = Form;
@@ -62,7 +61,6 @@ export default function Create() {
       onFinish={onSubmit}
       labelCol={{ span: 4 }}
       wrapperCol={{ span: 14 }}
-      className={s.Root}
     >
       <h3>Create Duanji</h3>
       <Item label="Title" name="title" rules={[{ required: true }]}>

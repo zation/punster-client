@@ -121,10 +121,10 @@ export default function Header({
     <Affix offsetTop={0}>
       <div className={s.Root}>
         <Row className={s.Content} align="middle">
-          <Col span={5} xs={24}>
+          <Col sm={5} xs={24}>
             <div className={s.LogoContainer}>
               <div className={s.Logo} onClick={onLogoClick}>Punster</div>
-              <Button icon={<MenuOutlined />} onClick={toggleDrawer} />
+              <Button className={s.MenuTrigger} icon={<MenuOutlined />} onClick={toggleDrawer} />
               <Drawer
                 title="Menu"
                 visible={visible}
@@ -176,7 +176,7 @@ export default function Header({
               </Drawer>
             </div>
           </Col>
-          <Col span={14} xs={0}>
+          <Col sm={14} xs={0}>
             <div className={s.ButtonContainer}>
               {currentPunster && (
                 <Button
@@ -189,7 +189,7 @@ export default function Header({
               )}
             </div>
           </Col>
-          <Col span={5} xs={0}>
+          <Col sm={5} xs={0}>
             {currentPunster ? (
               <Dropdown overlay={menu}>
                 <Space className={s.UserContainer}>

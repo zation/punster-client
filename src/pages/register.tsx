@@ -20,7 +20,6 @@ import {
   flow,
   prop,
 } from 'lodash/fp';
-import s from './register.less';
 import { useNavigate } from 'umi';
 
 const { Item } = Form;
@@ -59,7 +58,6 @@ export default function Register() {
       onFinish={onSubmit}
       labelCol={{ span: 4 }}
       wrapperCol={{ span: 14 }}
-      className={s.Root}
     >
       <h3>Register New Punster</h3>
       <Item label="Nickname" name="nickname" rules={[{ required: true }]}>
