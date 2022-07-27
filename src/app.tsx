@@ -5,7 +5,6 @@ import store from '@/models/store';
 import {
   readMine,
   readAll,
-  readMineFollowings,
 } from '@/models/punster';
 import {
   readFollowing as readFollowingDuanji,
@@ -20,16 +19,20 @@ fcl.config({
   'discovery.wallet.method': 'POP/RPC',
 });
 
+const preload = () => Promise.all([
+  dispatch(readMine()),
+  dispatch(readMineDuanji()),
+  dispatch(readFollowingDuanji()),
+]);
+
 fcl.currentUser.subscribe(async (user) => {
   if (user.loggedIn) {
-    await dispatch(readMine());
+    preload();
   }
 });
 
 dispatch(readAll());
-dispatch(readMineFollowings());
-dispatch(readMineDuanji());
-dispatch(readFollowingDuanji());
+preload();
 
 export function rootContainer(container: ReactNode[]) {
   return (

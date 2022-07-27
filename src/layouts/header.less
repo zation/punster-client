@@ -6,9 +6,12 @@
 }
 
 .Content {
-  width: @desktop-max-width;
   height: 80px;
   margin: 0 auto;
+
+  @media @desktop {
+    width: @desktop-max-width;
+  }
 }
 
 .Logo {
@@ -20,6 +23,12 @@
 
 .LogoContainer {
   border-right: 1px solid #33353c;
+  display: flex;
+  justify-content: space-between;
+
+  @media @mobile {
+    padding: 0 20px;
+  }
 }
 
 .UserContainer {

@@ -1,15 +1,21 @@
 @import '@/styles/varaibles';
 
 .ContentContainer {
-  width: @desktop-max-width;
   margin: 0 auto;
+
+  @media @desktop {
+    width: @desktop-max-width;
+  }
 }
 
 .Content {
   background: white;
   border-right: 1px solid #e4e5e6;
   border-left: 1px solid #e4e5e6;
-  padding: 20px;
+
+  @media @desktop {
+    padding: 20px;
+  }
 }
 
 .Punsters {

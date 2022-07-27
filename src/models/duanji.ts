@@ -13,6 +13,7 @@ import {
   upVote as upVoteService,
   cancelUpVote as cancelUpVoteService,
   readFunnyIndex as readFunnyIndexService,
+  readByAddress as readByAddressService,
   Duanji,
   DuanjiIPFS,
 } from '@/services/duanji';
@@ -40,8 +41,13 @@ export const readFollowing = createAsyncThunk(
   async () => readFollowingService(),
 );
 
+export const readByAddress = createAsyncThunk(
+  `${namespace}/readByAddress`,
+  async (address: string) => readByAddressService(address),
+);
+
 export const create = createAsyncThunk(
-  `${namespace}/readMineFollowings`,
+  `${namespace}/create`,
   async ({ title, content, imageHashes, createdAt }: DuanjiIPFS) => {
     const { Hash } = await uploadJSON<DuanjiIPFS>({ title, content, imageHashes, createdAt });
     await createService('', Hash);
@@ -86,7 +92,7 @@ const reducer = createReducer(adapter.getInitialState(), (builder) => {
     state.entities[id]!.commends = state.entities[id]!.commends.filter((commend) => commend !== address);
     state.entities[id]!.funnyIndex = funnyIndex;
   });
-  builder.addMatcher(isAnyOf(readFollowing.fulfilled, readMine.fulfilled), (state, { payload }) => {
+  builder.addMatcher(isAnyOf(readFollowing.fulfilled, readMine.fulfilled, readByAddress.fulfilled), (state, { payload }) => {
     adapter.setMany(state, payload);
   });
 });

@@ -1,4 +1,5 @@
 import React, {
+  ReactNode,
   useCallback,
   useMemo,
   useState,
@@ -13,6 +14,8 @@ import {
   Modal,
   Space,
   message,
+  Drawer,
+  Divider,
 } from 'antd';
 import { useNavigate } from 'umi';
 import {
@@ -21,14 +24,20 @@ import {
 import {
   destroy,
   readMine,
-  Punster,
+  Punster as PunsterModel,
 } from '@/models/punster';
 import {
   useAppDispatch,
 } from '@/models/store';
 import Avatar from '@/components/avatar';
+import Punster from '@/components/punster';
 import * as fcl from '@onflow/fcl'
 import { isRejected } from '@reduxjs/toolkit';
+import { MenuOutlined } from '@ant-design/icons';
+import {
+  map,
+  size,
+} from 'lodash/fp';
 
 import s from './header.less';
 
@@ -43,17 +52,23 @@ const menuItems = [{
 }];
 
 export interface HeaderProps {
-  currentPunster?: Punster | null
+  currentPunster?: PunsterModel | null
+  punsters: PunsterModel[]
 }
 
 export default function Header({
   currentPunster,
+  punsters,
 }: HeaderProps) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const [loading, setLoading] = useState(false);
+  const [visible, setVisible] = useState(false);
 
+  const toggleDrawer = useCallback(() => {
+    setVisible((value) => !value);
+  }, []);
   const onLogoClick = useCallback(() => {
     navigate('/');
   }, [navigate]);
@@ -71,6 +86,18 @@ export default function Header({
   const onCreate = useCallback(() => {
     navigate('/create');
   }, [navigate]);
+
+  const onLogout = useCallback(() => {
+    fcl.unauthenticate();
+    dispatch(logout());
+  }, [dispatch]);
+
+  const onDestroy = useCallback(() => {
+    confirm({
+      title: 'Do you want to destroy your punster? It can\'t revert.',
+      onOk: () => dispatch(destroy()),
+    })
+  }, [dispatch]);
 
   const menu = useMemo(() => (
     <Menu
@@ -94,10 +121,62 @@ export default function Header({
     <Affix offsetTop={0}>
       <div className={s.Root}>
         <Row className={s.Content} align="middle">
-          <Col span={5} className={s.LogoContainer}>
-            <div className={s.Logo} onClick={onLogoClick}>Punster</div>
+          <Col span={5} xs={24}>
+            <div className={s.LogoContainer}>
+              <div className={s.Logo} onClick={onLogoClick}>Punster</div>
+              <Button icon={<MenuOutlined />} onClick={toggleDrawer} />
+              <Drawer
+                title="Menu"
+                visible={visible}
+                onClose={toggleDrawer}
+                width={240}
+              >
+                <h3>Punsters</h3>
+                {map<PunsterModel, ReactNode>((punster) => (
+                  <Punster
+                    punster={punster}
+                    key={punster.id}
+                    currentPunsterFollowings={currentPunster?.followings}
+                  />
+                ))(punsters)}
+                <Divider />
+                {currentPunster ? (
+                  <>
+                    <h3>Account Info</h3>
+                    {<Avatar className={s.Avatar} avatarHash={currentPunster.avatarHash} />}
+                    {currentPunster.nickname}
+                    <div style={{ marginTop: 4 }}>
+                      <b>{size(currentPunster.followings)}</b> Following <b>{size(currentPunster.followers)}</b> Followers
+                    </div>
+                    <Button
+                      style={{ margin: '8px 0' }}
+                      onClick={onLogout}
+                      block
+                      size="large"
+                    >
+                      Logout
+                    </Button>
+                    <Button
+                      onClick={onDestroy}
+                      block
+                    >
+                      Destroy
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    type="primary"
+                    size="large"
+                    loading={loading}
+                    onClick={onLoginOrRegister}
+                  >
+                    Login / Register
+                  </Button>
+                )}
+              </Drawer>
+            </div>
           </Col>
-          <Col span={14}>
+          <Col span={14} xs={0}>
             <div className={s.ButtonContainer}>
               {currentPunster && (
                 <Button
@@ -110,7 +189,7 @@ export default function Header({
               )}
             </div>
           </Col>
-          <Col span={5}>
+          <Col span={5} xs={0}>
             {currentPunster ? (
               <Dropdown overlay={menu}>
                 <Space className={s.UserContainer}>

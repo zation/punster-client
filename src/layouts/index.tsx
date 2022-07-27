@@ -42,9 +42,9 @@ export default function Layout() {
 
   return (
     <div>
-      <Header currentPunster={currentPunster} />
+      <Header currentPunster={currentPunster} punsters={punsters} />
       <Row className={s.ContentContainer}>
-        <Col span={5}>
+        <Col span={5} xs={0}>
           <Affix offsetTop={80}>
             <div className={s.Punsters}>
               {map<PunsterModel, ReactNode>((punster) => (
@@ -57,7 +57,7 @@ export default function Layout() {
             </div>
           </Affix>
         </Col>
-        <Col span={14}>
+        <Col span={14} xs={24}>
           <div className={s.Content}>
             <Outlet />
           </div>

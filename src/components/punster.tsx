@@ -8,6 +8,9 @@ import {
   useAppDispatch,
 } from '@/models/store';
 import {
+  readByAddress as readDuanjiByAddress,
+} from '@/models/duanji';
+import {
   follow,
   unFollow,
   readAll,
@@ -47,7 +50,10 @@ export default function Punster({
   const onFollow = useCallback(async () => {
     setLoading(true);
     await dispatch(follow(owner));
-    await dispatch(readAll());
+    await Promise.all([
+      dispatch(readDuanjiByAddress(owner)),
+      dispatch(readAll()),
+    ]);
     message.success('Follow success.');
     setLoading(false);
   }, [owner]);

@@ -136,6 +136,7 @@ export const readMyLatest = async () => {
   if (!addr) {
     return null;
   }
+  console.log(addr)
   const resource = await fcl.query({
     cadence: `
 import PunstersNFT from ${contractHash}
