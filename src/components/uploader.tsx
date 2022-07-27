@@ -5,7 +5,7 @@ export default function Uploader({ onChange, showUploadList, maxCount }: Pick<Up
   return (
     <Upload
       listType="picture-card"
-      action="http://47.241.31.74:5001/api/v0/add"
+      action="//47.241.31.74:5001/api/v0/add"
       onChange={onChange}
       showUploadList={showUploadList}
       maxCount={maxCount}
