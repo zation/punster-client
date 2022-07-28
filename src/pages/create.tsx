@@ -3,6 +3,7 @@ import {
   Form,
   Input,
   message,
+  Switch,
 } from 'antd';
 import Uploader from '@/components/uploader';
 import {
@@ -29,6 +30,7 @@ interface Values {
   title: string
   content: string
   images: UploadChangeParam<UploadFile<string>>
+  isAdvertisement: boolean
 }
 
 export default function Create() {
@@ -36,7 +38,7 @@ export default function Create() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const onSubmit = useCallback(async ({ title, content, images }: Values) => {
+  const onSubmit = useCallback(async ({ title, content, images, isAdvertisement }: Values) => {
     setSubmitting(true)
     try {
       await dispatch(create({
@@ -47,6 +49,7 @@ export default function Create() {
           map(prop('response.Hash')),
         )(images),
         createdAt: new Date().toISOString(),
+        isAdvertisement,
       }));
     } catch (e) {
       console.error(e);
@@ -71,6 +74,9 @@ export default function Create() {
       </Item>
       <Item label="Content" name="content" rules={[{ required: true }]}>
         <TextArea />
+      </Item>
+      <Item label="Is AD" name="isAdvertisement" valuePropName="checked">
+        <Switch />
       </Item>
       <Item wrapperCol={{ offset: 4, span: 8 }}>
         <Button htmlType="submit" type="primary" block loading={submitting}>Submit</Button>

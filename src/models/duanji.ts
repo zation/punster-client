@@ -17,6 +17,7 @@ import {
   Duanji,
   DuanjiIPFS,
 } from '@/services/duanji';
+import { create as createAdertisementService } from '@/services/advertisement';
 import {
   find,
   flow,
@@ -69,11 +70,19 @@ export const readByAddress = createAsyncThunk(
   async (address: string) => readByAddressService(address),
 );
 
+export interface CreateParams extends DuanjiIPFS {
+  isAdvertisement: boolean
+}
+
 export const create = createAsyncThunk(
   `${namespace}/create`,
-  async ({ title, content, imageHashes, createdAt }: DuanjiIPFS) => {
+  async ({ title, content, imageHashes, createdAt, isAdvertisement }: CreateParams) => {
     const { Hash } = await uploadJSON<DuanjiIPFS>({ title, content, imageHashes, createdAt });
-    await createService('', Hash);
+    if (isAdvertisement) {
+      await createAdertisementService('', Hash);
+    } else {
+      await createService('', Hash);
+    }
     return readMyLatestService();
   },
 );

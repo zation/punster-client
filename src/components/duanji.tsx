@@ -15,6 +15,7 @@ import {
   message,
   Spin,
   Dropdown,
+  Tag,
 } from 'antd';
 import classNames from 'classnames';
 import parseISO from 'date-fns/fp/parseISO';
@@ -65,6 +66,7 @@ export default function Duanji({
     owner,
     funnyIndex,
     createdAt,
+    isAD,
   },
   punster,
   currentPunster,
@@ -125,7 +127,10 @@ export default function Duanji({
           )}
           <span className={s.lighten}>Created</span>: {time()(createdAt)}
         </div>
-        <div className={s.Title}>{title}</div>
+        <div className={s.Title}>
+          {isAD && <Tag color="green">AD</Tag>}
+          {title}
+        </div>
         <div className={s.Content}>{content}</div>
         <div className={s.Images}>
           {map<string, ReactNode>((hash) => (
