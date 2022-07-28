@@ -80,10 +80,12 @@ export const create = createAsyncThunk(
     const { Hash } = await uploadJSON<DuanjiIPFS>({ title, content, imageHashes, createdAt });
     if (isAdvertisement) {
       await createAdertisementService('', Hash);
+      const duanjis = readMineService();
+      return find(prop('isAD'))(duanjis);
     } else {
       await createService('', Hash);
+      return readMyLatestService();
     }
-    return readMyLatestService();
   },
 );
 

@@ -20,6 +20,7 @@ import {
   flow,
   map,
   prop,
+  split,
 } from 'lodash/fp';
 import { useNavigate } from 'umi';
 
@@ -50,13 +51,15 @@ export default function Create() {
         )(images),
         createdAt: new Date().toISOString(),
         isAdvertisement,
-      }));
-    } catch (e) {
-      console.error(e);
+      })).unwrap();
+      message.success('Create success.');
+      navigate('/');
+    } catch (e: any) {
+      let errorMessage = split('panic: ')(e.message)[1];
+      errorMessage = split('\n')(errorMessage)[0];
+      message.error(errorMessage);
     }
     setSubmitting(false);
-    message.success('Create success.');
-    navigate('/');
   }, [setSubmitting, navigate, dispatch]);
 
   return (
