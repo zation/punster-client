@@ -1,12 +1,12 @@
 import { ReactNode } from 'react';
 import Duanji from '@/components/duanji';
-import { selectors, Duanji as DuanjiModel } from '@/models/duanji';
+import { Duanji as DuanjiModel, getDuanjisSelector} from '@/models/duanji';
 import { selectEntities } from '@/models/auth';
 import { selectors as punsterSelectors, Punster as PunsterModel } from '@/models/punster';
 import Punster from '@/components/punster';
 import { RootState } from '@/models/store';
 import { useSelector } from 'react-redux';
-import { map, flow, find, propEq } from 'lodash/fp';
+import { map, flow, propEq } from 'lodash/fp';
 import { useParams } from 'umi';
 import { filter } from 'lodash';
 import { Divider } from 'antd';
@@ -18,19 +18,14 @@ interface DuanjiDisplay extends DuanjiModel {
 }
 
 const selector = (id?: string) => (state: RootState) => {
-  const punsters = punsterSelectors.selectAll(state);
   const { punsterId } = selectEntities(state);
 
   return {
     currentPunster: punsterId ? punsterSelectors.selectById(state, punsterId) : undefined,
     punster: id ? punsterSelectors.selectById(state, id) : undefined,
     duanjis: flow(
-      selectors.selectAll,
-      map<DuanjiModel, DuanjiDisplay>((duanji) => ({
-        ...duanji,
-        punster: find(propEq('owner', duanji.owner))(punsters),
-      })),
-      filter(propEq('id', id)),
+      getDuanjisSelector,
+      filter(propEq('punster.id', id)),
     )(state),
   };
 }

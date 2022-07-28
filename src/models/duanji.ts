@@ -17,9 +17,17 @@ import {
   Duanji,
   DuanjiIPFS,
 } from '@/services/duanji';
-import { prop } from 'lodash/fp';
+import {
+  find,
+  flow,
+  map,
+  prop,
+  propEq,
+  sortBy,
+} from 'lodash/fp';
 import type { RootState } from './store';
 import { selectEntities } from './auth';
+import { Punster, selectors as punsterSelectors } from './punster';
 
 export type {
   Duanji,
@@ -27,9 +35,24 @@ export type {
   DuanjiResource,
 } from '@/services/duanji';
 
+export interface DuanjiDisplay extends Duanji {
+  punster: Punster
+}
+
 const adapter = createEntityAdapter<Duanji>();
 const namespace = 'duanji';
 export const selectors = adapter.getSelectors<RootState>(prop(namespace));
+export const getDuanjisSelector = (state: RootState) => {
+  const punsters = punsterSelectors.selectAll(state);
+  return flow(
+    selectors.selectAll,
+    map<Duanji, DuanjiDisplay>((duanji) => ({
+      ...duanji,
+      punster: find(propEq('owner', duanji.owner))(punsters),
+    })),
+    sortBy(({ createdAt }) => -new Date(createdAt).getTime()),
+  )(state);
+};
 
 export const readMine = createAsyncThunk(
   `${namespace}/readMine`,
