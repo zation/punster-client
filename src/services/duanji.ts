@@ -107,6 +107,37 @@ transaction (ownerAddr: Address, duanjiID: UInt64) {
   return fcl.tx(transactionId).onceSealed()
 }
 
+export const transfer = async (toAddress: string, duanjiId: string) => {
+  const transactionId = await fcl.mutate({
+    cadence: `
+import PunstersNFT from ${contractHash}
+import StarRealm from ${contractHash}
+
+transaction (to: Address, id: UInt64) {
+    prepare (acct: AuthAccount) {
+        if let punsterRef = acct.borrow<&PunstersNFT.Collection>(from: PunstersNFT.PunsterStoragePath) {
+            let duanjiRes <- punsterRef.withdraw(withdrawID: id);
+
+            if let toRef = PunstersNFT.getIPunsterFromAddress(addr: to) {
+                toRef.deposit(token: <- duanjiRes);
+            } else {
+                panic("\`to\` address does not exist!");
+            }
+        }
+    }
+
+    execute {
+
+    }
+}`,
+    args: (arg, type) => [
+      arg(toAddress, type.Address),
+      arg(duanjiId, type.UInt64),
+    ],
+  })
+  return fcl.tx(transactionId).onceSealed()
+}
+
 export const readFollowing = async () => {
   const { addr } = await fcl.currentUser.snapshot()
   if (!addr) {
@@ -136,7 +167,6 @@ export const readMyLatest = async () => {
   if (!addr) {
     return null;
   }
-  console.log(addr)
   const resource = await fcl.query({
     cadence: `
 import PunstersNFT from ${contractHash}

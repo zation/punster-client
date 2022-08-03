@@ -1,1 +1,1 @@
-export const contractHash = '0xa75346d2c919b743'
+export const contractHash = '0x1a478a7149935b63'

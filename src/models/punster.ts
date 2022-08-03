@@ -3,6 +3,7 @@ import {
   createAsyncThunk,
   createReducer,
   isAnyOf,
+  Update,
 } from '@reduxjs/toolkit';
 import { uploadJSON } from '@/services/ipfs';
 import {
@@ -13,6 +14,8 @@ import {
   register as registerService,
   follow as followService,
   unFollow as unFollowService,
+  createStarPort as createStarPortService,
+  transfer as transferService,
   Punster,
   PunsterIPFS,
 } from '@/services/punster';
@@ -76,13 +79,31 @@ export const unFollow = createAsyncThunk<void, string>(
   async (address) => {
     await unFollowService(address);
   },
-)
+);
+
+export const createStarPort = createAsyncThunk(
+  `${namespace}/createStarPort`,
+  async () => {
+    await createStarPortService();
+  },
+);
+
+export const transfer = createAsyncThunk<Update<Punster>, { id: string, toAddress: string }>(
+  `${namespace}/transfer`,
+  async ({ toAddress, id }) => {
+    await transferService(toAddress);
+    return { id, changes: { owner: toAddress } };
+  },
+);
 
 const reducer = createReducer(adapter.getInitialState(), (builder) => {
   builder.addCase(destroy.fulfilled, (state, { payload: { punsterId } }) => {
     if (punsterId) {
       adapter.removeOne(state, punsterId);
     }
+  });
+  builder.addCase(transfer.fulfilled, (state, { payload }) => {
+    adapter.updateOne(state, payload);
   });
   builder.addCase(readAll.fulfilled, (state, { payload }) => {
     adapter.setAll(state, payload);

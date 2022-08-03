@@ -16,6 +16,10 @@ import {
   Spin,
   Dropdown,
   Tag,
+  Modal,
+  Form,
+  Input,
+  Button,
 } from 'antd';
 import classNames from 'classnames';
 import parseISO from 'date-fns/fp/parseISO';
@@ -25,13 +29,16 @@ import {
   upVote,
   cancelUpVote,
   Duanji as DuanjiModel,
+  transfer,
 } from '@/models/duanji';
-import Punster from './punster';
-import Image from './ipfs-image';
 import { Punster as PunsterModel } from '@/models/punster';
 import { useAppDispatch } from '@/models/store';
+import Punster from './punster';
+import Image from './ipfs-image';
 
 import s from './duanji.less';
+
+const { Item, useForm } = Form;
 
 const time = ({
   formatter = 'yyyy-MM-dd HH:mm:ss',
@@ -74,6 +81,8 @@ export default function Duanji({
   const dispatch = useAppDispatch();
   const isUpVoted = includes(currentPunster?.owner)(commends);
   const [isVoting, setIsVoting] = useState(false);
+  const [transferModelVisible, setTransferModelVisible] = useState(false);
+  const [form] = useForm<{ toAddress: string }>();
 
   const onUpVote = useCallback(async () => {
     if (!currentPunster) {
@@ -92,6 +101,18 @@ export default function Duanji({
     await dispatch(cancelUpVote({ id, owner }));
     setIsVoting(false);
   }, [owner, id, setIsVoting, dispatch, currentPunster]);
+
+  const toggleTransformModel = useCallback(async () => {
+    setTransferModelVisible((visible) => !visible);
+  }, [setTransferModelVisible]);
+
+  const onTransfer = useCallback(async () => {
+    const { toAddress } = await form.validateFields();
+    await dispatch(transfer({ id, toAddress: toAddress }));
+    form.resetFields();
+    setTransferModelVisible(false);
+    message.success('Transfer duanji success');
+  }, [form, setTransferModelVisible, dispatch, id]);
 
   return (
     <div className={s.Root}>
@@ -126,6 +147,9 @@ export default function Duanji({
             </span>
           )}
           <span className={s.lighten}>Created</span>: {time()(createdAt)}
+          {currentPunster && currentPunster.owner === owner && (
+            <Button className={s.Transfer} onClick={toggleTransformModel}>Transfer</Button>
+          )}
         </div>
         <div className={s.Title}>
           {isAD && <Tag color="green">AD</Tag>}
@@ -138,6 +162,19 @@ export default function Duanji({
           ))(imageHashes)}
         </div>
       </div>
+
+      <Modal
+        title={`Transform Duanji ${title}`}
+        visible={transferModelVisible}
+        onCancel={toggleTransformModel}
+        onOk={onTransfer}
+      >
+        <Form form={form}>
+          <Item label="To Address" name="toAddress" rules={[{ required: true }]}>
+            <Input />
+          </Item>
+        </Form>
+      </Modal>
     </div>
   );
 };

@@ -16,6 +16,8 @@ import {
   message,
   Drawer,
   Divider,
+  Form,
+  Input,
 } from 'antd';
 import { useNavigate } from 'umi';
 import {
@@ -24,6 +26,8 @@ import {
 import {
   destroy,
   readMine,
+  createStarPort,
+  transfer,
   Punster as PunsterModel,
 } from '@/models/punster';
 import {
@@ -37,15 +41,26 @@ import { MenuOutlined } from '@ant-design/icons';
 import {
   map,
   size,
+  split,
 } from 'lodash/fp';
 
 import s from './header.less';
 
 const { confirm } = Modal;
+const { Item, useForm } = Form;
 
 const menuItems = [{
+  key: 'createStarPort',
+  label: 'Create Star Port',
+}, {
+  key: 'myDuanji',
+  label: 'My Duanji',
+}, {
   key: 'logout',
   label: 'Logout',
+}, {
+  key: 'transfer',
+  label: 'Transfer Punster'
 }, {
   key: 'destroy',
   label: 'Destroy',
@@ -62,9 +77,11 @@ export default function Header({
 }: HeaderProps) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const [form] = useForm<{ toAddress: string }>();
 
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [transferModelVisible, setTransferModelVisible] = useState(false);
 
   const toggleDrawer = useCallback(() => {
     setVisible((value) => !value);
@@ -99,13 +116,46 @@ export default function Header({
     })
   }, [dispatch]);
 
+  const onGoToMyDuanji = () => {
+    if (currentPunster) {
+      navigate(`/punster/${currentPunster.id}`);
+    }
+  };
+  const onGoToMyDuanjiCallback = useCallback(onGoToMyDuanji, [navigate, currentPunster && currentPunster.id]);
+
+  const onCreateStarPort = async () => {
+    try {
+      await dispatch(createStarPort()).unwrap();
+      message.success('Create star port success');
+    } catch (e: any) {
+      let errorMessage = split('panic: ')(e.message)[1];
+      errorMessage = split('\n')(errorMessage)[0];
+      message.error(errorMessage);
+    }
+  };
+  const onCreateStarPortCallback = useCallback(onCreateStarPort, [dispatch]);
+
+  const onTransfer = useCallback(async () => {
+    const { toAddress } = await form.validateFields();
+    await dispatch(transfer({ id: currentPunster!.id, toAddress: toAddress }));
+    form.resetFields();
+    setTransferModelVisible(false);
+    message.success('Transfer punster success');
+  }, [form, setTransferModelVisible, dispatch, currentPunster && currentPunster.id]);
+
   const menu = useMemo(() => (
     <Menu
       items={menuItems}
       onClick={async ({ key }) => {
-        if (key === 'logout') {
+        if (key === 'createStarPort') {
+          await onCreateStarPort()
+        } else if (key === 'myDuanji') {
+          onGoToMyDuanji()
+        } else if (key === 'logout') {
           fcl.unauthenticate();
           dispatch(logout());
+        } else if (key === 'transfer') {
+          setTransferModelVisible(true);
         } else if (key === 'destroy') {
           confirm({
             title: 'Do you want to destroy your punster? It can\'t revert.',
@@ -115,7 +165,7 @@ export default function Header({
         }
       }}
     />
-  ), [dispatch]);
+  ), [dispatch, currentPunster && currentPunster.id]);
 
   return (
     <Affix offsetTop={0}>
@@ -123,7 +173,7 @@ export default function Header({
         <Row className={s.Content} align="middle">
           <Col sm={5} xs={24}>
             <div className={s.LogoContainer}>
-              <div className={s.Logo} onClick={onLogoClick}>Punster</div>
+              <div className={s.Logo} onClick={onLogoClick}>PunStar</div>
               <Button className={s.MenuTrigger} icon={<MenuOutlined />} onClick={toggleDrawer} />
               <Drawer
                 title="Menu"
@@ -150,11 +200,35 @@ export default function Header({
                     </div>
                     <Button
                       style={{ margin: '8px 0' }}
+                      onClick={onGoToMyDuanjiCallback}
+                      block
+                      size="large"
+                    >
+                      My Duanji
+                    </Button>
+                    <Button
+                      style={{ margin: '8px 0' }}
+                      onClick={onCreateStarPortCallback}
+                      block
+                      size="large"
+                    >
+                      Create Star Port
+                    </Button>
+                    <Button
+                      style={{ margin: '8px 0' }}
                       onClick={onLogout}
                       block
                       size="large"
                     >
                       Logout
+                    </Button>
+                    <Button
+                      style={{ margin: '8px 0' }}
+                      onClick={() => setTransferModelVisible(true)}
+                      block
+                      size="large"
+                    >
+                      Transfer Punster
                     </Button>
                     <Button
                       onClick={onDestroy}
@@ -209,6 +283,21 @@ export default function Header({
             )}
           </Col>
         </Row>
+
+        {currentPunster && (
+          <Modal
+            title={`Transform Punster ${currentPunster.nickname}`}
+            visible={transferModelVisible}
+            onCancel={() => setTransferModelVisible(false)}
+            onOk={onTransfer}
+          >
+            <Form form={form}>
+              <Item label="To Address" name="toAddress" rules={[{ required: true }]}>
+                <Input />
+              </Item>
+            </Form>
+          </Modal>
+        )}
       </div>
     </Affix>
   );

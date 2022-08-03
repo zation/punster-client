@@ -3,6 +3,7 @@ import {
   createAsyncThunk,
   createReducer,
   isAnyOf,
+  Update,
 } from '@reduxjs/toolkit';
 import { uploadJSON } from '@/services/ipfs';
 import {
@@ -14,6 +15,7 @@ import {
   cancelUpVote as cancelUpVoteService,
   readFunnyIndex as readFunnyIndexService,
   readByAddress as readByAddressService,
+  transfer as transferService,
   Duanji,
   DuanjiIPFS,
 } from '@/services/duanji';
@@ -112,11 +114,22 @@ export const cancelUpVote = createAsyncThunk<{ id: string, address: string, funn
   },
 );
 
+export const transfer = createAsyncThunk<Update<Duanji>, { id: string, toAddress: string }>(
+  `${namespace}/transfer`,
+  async ({ toAddress, id }) => {
+    await transferService(toAddress, id);
+    return { id, changes: { owner: toAddress } };
+  },
+);
+
 const reducer = createReducer(adapter.getInitialState(), (builder) => {
   builder.addCase(create.fulfilled, (state, { payload }) => {
     if (payload) {
       adapter.setOne(state, payload);
     }
+  });
+  builder.addCase(transfer.fulfilled, (state, { payload }) => {
+    adapter.updateOne(state, payload);
   });
   builder.addCase(upVote.fulfilled, (state, { payload: { address, id, funnyIndex } }) => {
     state.entities[id]!.commends.push(address);
