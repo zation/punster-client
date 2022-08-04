@@ -16,6 +16,7 @@ import {
   unFollow as unFollowService,
   createStarPort as createStarPortService,
   transfer as transferService,
+  receive as receiveService,
   Punster,
   PunsterIPFS,
 } from '@/services/punster';
@@ -93,6 +94,13 @@ export const transfer = createAsyncThunk<Update<Punster>, { id: string, toAddres
   async ({ toAddress, id }) => {
     await transferService(toAddress);
     return { id, changes: { owner: toAddress } };
+  },
+);
+
+export const receive = createAsyncThunk(
+  `${namespace}/accept`,
+  async () => {
+    return await receiveService();
   },
 );
 

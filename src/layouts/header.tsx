@@ -27,6 +27,7 @@ import {
   destroy,
   readMine,
   createStarPort,
+  receive,
   transfer,
   Punster as PunsterModel,
 } from '@/models/punster';
@@ -52,6 +53,9 @@ const { Item, useForm } = Form;
 const menuItems = [{
   key: 'createStarPort',
   label: 'Create Star Port',
+}, {
+  key: 'receivePunster',
+  label: 'Receive Punster',
 }, {
   key: 'myDuanji',
   label: 'My Duanji',
@@ -135,6 +139,19 @@ export default function Header({
   };
   const onCreateStarPortCallback = useCallback(onCreateStarPort, [dispatch]);
 
+  const onReceivePunster = async () => {
+    try {
+      await dispatch(receive()).unwrap();
+      await message.success('Receive punster success');
+      window.location.reload();
+    } catch (e: any) {
+      let errorMessage = split('panic: ')(e.message)[1];
+      errorMessage = split('\n')(errorMessage)[0];
+      message.error(errorMessage);
+    }
+  }
+  const onReceivePunsterCallback = useCallback(onReceivePunster, [dispatch]);
+
   const onTransfer = useCallback(async () => {
     const { toAddress } = await form.validateFields();
     await dispatch(transfer({ id: currentPunster!.id, toAddress: toAddress }));
@@ -148,9 +165,11 @@ export default function Header({
       items={menuItems}
       onClick={async ({ key }) => {
         if (key === 'createStarPort') {
-          await onCreateStarPort()
+          await onCreateStarPort();
+        } if (key === 'receivePunster') {
+          await onReceivePunster();
         } else if (key === 'myDuanji') {
-          onGoToMyDuanji()
+          onGoToMyDuanji();
         } else if (key === 'logout') {
           fcl.unauthenticate();
           dispatch(logout());
@@ -213,6 +232,14 @@ export default function Header({
                       size="large"
                     >
                       Create Star Port
+                    </Button>
+                    <Button
+                      style={{ margin: '8px 0' }}
+                      onClick={onReceivePunsterCallback}
+                      block
+                      size="large"
+                    >
+                      Receive Punster
                     </Button>
                     <Button
                       style={{ margin: '8px 0' }}

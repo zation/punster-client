@@ -49,6 +49,7 @@ export default function Layout() {
             <div className={s.Punsters}>
               {map<PunsterModel, ReactNode>((punster) => (
                 <Punster
+                  className={s.Punster}
                   punster={punster}
                   key={punster.id}
                   currentPunsterFollowings={currentPunster?.followings}
