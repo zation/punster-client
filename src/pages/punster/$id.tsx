@@ -1,12 +1,32 @@
-import { ReactNode } from 'react';
+import {
+  ReactNode,
+  useEffect,
+} from 'react';
 import Duanji from '@/components/duanji';
-import { Duanji as DuanjiModel, getDuanjisSelector} from '@/models/duanji';
+import {
+  Duanji as DuanjiModel,
+  getDuanjisSelector,
+  readByAddress,
+} from '@/models/duanji';
 import { selectEntities } from '@/models/auth';
-import { selectors as punsterSelectors, Punster as PunsterModel } from '@/models/punster';
+import {
+  selectors as punsterSelectors,
+  Punster as PunsterModel,
+} from '@/models/punster';
 import Punster from '@/components/punster';
-import { RootState } from '@/models/store';
-import { useSelector } from 'react-redux';
-import { map, flow, propEq, filter } from 'lodash/fp';
+import {
+  RootState,
+  useAppDispatch,
+} from '@/models/store';
+import {
+  useSelector,
+} from 'react-redux';
+import {
+  map,
+  flow,
+  propEq,
+  filter,
+} from 'lodash/fp';
 import { useParams } from 'umi';
 import { Divider } from 'antd';
 
@@ -36,6 +56,12 @@ export default function HomePage() {
     currentPunster,
     punster,
   } = useSelector(selector(id));
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    if (punster) {
+      dispatch(readByAddress(punster.owner));
+    }
+  }, [punster?.owner]);
 
   return (
     <div>
