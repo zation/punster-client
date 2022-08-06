@@ -5,11 +5,11 @@ import React, {
 } from 'react';
 import {
   SmileOutlined,
-  MehOutlined,
 } from '@ant-design/icons';
 import {
   map,
   includes,
+  size,
 } from 'lodash/fp';
 import {
   message,
@@ -71,7 +71,6 @@ export default function Duanji({
     imageHashes,
     commends,
     owner,
-    funnyIndex,
     createdAt,
     isAD,
   },
@@ -122,11 +121,11 @@ export default function Duanji({
             {isUpVoted ? (
               <SmileOutlined className={classNames(s.FunnyIndex, s.hot)} />
             ) : (
-              <MehOutlined className={s.FunnyIndex} />
+              <SmileOutlined className={s.FunnyIndex} />
             )}
           </div>
         </Spin>
-        <div className={s.Number} style={{ marginBottom: 20 }}>{funnyIndex}</div>
+        <div className={s.Number} style={{ marginBottom: 20 }}>{size(commends)}</div>
       </div>
 
       <div className={s.Main}>
