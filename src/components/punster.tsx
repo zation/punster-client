@@ -29,6 +29,7 @@ export interface PunsterProps {
   punster: PunsterModel
   currentPunsterFollowings?: string[]
   showFollowInfo?: boolean
+  showFunnyIndex?: boolean
   className?: string
 }
 
@@ -40,10 +41,12 @@ export default function Punster({
     owner,
     followings,
     followers,
+    funnyIndex,
   },
   className,
   currentPunsterFollowings,
   showFollowInfo = false,
+  showFunnyIndex = false,
 }: PunsterProps) {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
@@ -74,6 +77,9 @@ export default function Punster({
             {nickname}
           </Link>
         </div>
+        {showFunnyIndex && (
+          <div className={s.FunnyIndex}><b>{funnyIndex}</b> Funny Index</div>
+        )}
         {showFollowInfo && (
           <>
             <div className={s.FollowInfo}><b>{size(followings)}</b> Following</div>

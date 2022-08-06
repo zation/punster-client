@@ -6,9 +6,8 @@ import { selectors as punsterSelectors, Punster as PunsterModel } from '@/models
 import Punster from '@/components/punster';
 import { RootState } from '@/models/store';
 import { useSelector } from 'react-redux';
-import { map, flow, propEq } from 'lodash/fp';
+import { map, flow, propEq, filter } from 'lodash/fp';
 import { useParams } from 'umi';
-import { filter } from 'lodash';
 import { Divider } from 'antd';
 
 import s from './$id.less';
@@ -45,6 +44,7 @@ export default function HomePage() {
           className={s.Punster}
           punster={punster}
           showFollowInfo
+          showFunnyIndex
           currentPunsterFollowings={currentPunster?.followings}
         />
       )}

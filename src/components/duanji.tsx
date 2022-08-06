@@ -140,6 +140,7 @@ export default function Duanji({
                     punster={punster}
                     currentPunsterFollowings={currentPunster?.followings}
                     showFollowInfo
+                    showFunnyIndex
                   />
                 )}>
               <span className={s.Nickname}>{punster.nickname}</span>
@@ -147,7 +148,7 @@ export default function Duanji({
             </span>
           )}
           <span className={s.lighten}>Created</span>: {time()(createdAt)}
-          {currentPunster && currentPunster.owner === owner && (
+          {currentPunster && currentPunster.owner === owner && !isAD && (
             <Button className={s.Transfer} onClick={toggleTransformModel}>Transfer</Button>
           )}
         </div>
