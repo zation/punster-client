@@ -115,18 +115,24 @@ export default function Duanji({
 
   return (
     <div className={s.Root}>
-      <div className={s.Numbers}>
-        <Spin spinning={isVoting}>
-          <div onClick={isUpVoted ? onCancelUpVote : onUpVote}>
-            {isUpVoted ? (
-              <SmileOutlined className={classNames(s.FunnyIndex, s.hot)} />
-            ) : (
-              <SmileOutlined className={s.FunnyIndex} />
-            )}
-          </div>
-        </Spin>
-        <div className={s.Number} style={{ marginBottom: 20 }}>{size(commends)}</div>
-      </div>
+      {isAD ? (
+        <div>
+          <Tag className={s.AD} color="green">AD</Tag>
+        </div>
+      ) : (
+        <div className={s.Numbers}>
+          <Spin spinning={isVoting}>
+            <div onClick={isUpVoted ? onCancelUpVote : onUpVote}>
+              {isUpVoted ? (
+                <SmileOutlined className={classNames(s.FunnyIndex, s.hot)} />
+              ) : (
+                <SmileOutlined className={s.FunnyIndex} />
+              )}
+            </div>
+          </Spin>
+          <div className={s.Number} style={{ marginBottom: 20 }}>{size(commends)}</div>
+        </div>
+      )}
 
       <div className={s.Main}>
         <div>
@@ -152,7 +158,6 @@ export default function Duanji({
           )}
         </div>
         <div className={s.Title}>
-          {isAD && <Tag color="green">AD</Tag>}
           {title}
         </div>
         <div className={s.Content}>{content}</div>
