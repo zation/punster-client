@@ -44,6 +44,7 @@ import {
   size,
   split,
 } from 'lodash/fp';
+import logo from '@/assets/logo.png';
 
 import s from './header.less';
 
@@ -192,7 +193,10 @@ export default function Header({
         <Row className={s.Content} align="middle">
           <Col sm={5} xs={24}>
             <div className={s.LogoContainer}>
-              <div className={s.Logo} onClick={onLogoClick}>PunStar</div>
+              <div className={s.Logo} onClick={onLogoClick}>
+                <img src={logo} />
+                PunStar
+              </div>
               <Button className={s.MenuTrigger} icon={<MenuOutlined />} onClick={toggleDrawer} />
               <Drawer
                 title="Menu"
