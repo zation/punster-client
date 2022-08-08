@@ -263,7 +263,7 @@ transaction () {
   return fcl.tx(transactionId).onceSealed();
 }
 
-export const readOne = async (address: string | null | undefined): Promise<Punster | null> => {
+export const readOne = async (address: string | null | undefined): Promise<Punster | undefined> => {
   if (!address) {
     return null;
   }
@@ -283,8 +283,11 @@ pub fun main(addr: Address): AnyStruct? {
       arg(address, type.Address),
     ],
   }) as PunsterResource;
-  const data = await fetchJSON<PunsterIPFS>(resource.ipfsUrl);
-  return { ...resource, ...data };
+  if (resource) {
+    const data = await fetchJSON<PunsterIPFS>(resource.ipfsUrl);
+    return { ...resource, ...data };
+  }
+  return undefined;
 };
 
 export const readMine = async () => {
@@ -304,7 +307,7 @@ pub fun main(): {UInt64: Address} {
 
   const results = await Promise.all(flow(
     values,
-    map<string, Promise<Punster | null>>((address) => readOne(address)),
+    map<string, Promise<Punster | undefined>>((address) => readOne(address)),
   )(responses));
   return compact(results);
 };
