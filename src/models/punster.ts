@@ -117,7 +117,7 @@ const reducer = createReducer(adapter.getInitialState(), (builder) => {
     adapter.setAll(state, payload);
   });
   builder.addMatcher(isAnyOf(register.fulfilled, readMine.fulfilled), (state, { payload }) => {
-    if (payload !== null) {
+    if (payload) {
       adapter.setOne(state, payload);
     }
   });
