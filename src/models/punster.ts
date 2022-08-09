@@ -53,7 +53,13 @@ export const destroy = createAsyncThunk<{ punsterId: string | null }, void, { st
 
 export const readMine = createAsyncThunk(
   `${namespace}/readMine`,
-  async () => readMineService(),
+  async () => {
+    const punster = await readMineService();
+    if (punster) {
+      return punster;
+    }
+    throw new Error('No punster');
+  },
 );
 
 export const readAll = createAsyncThunk(

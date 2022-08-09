@@ -26,12 +26,13 @@ fcl.config({
 
 fcl.currentUser.subscribe(async (user) => {
   if (user.loggedIn) {
-    const action = dispatch(readMine());
+    const action = await dispatch(readMine());
     if (isRejected(action)) {
       history.push('/register');
+    } else {
+      dispatch(readMineDuanji());
+      dispatch(readFollowingDuanji());
     }
-    dispatch(readMineDuanji());
-    dispatch(readFollowingDuanji());
   }
 });
 

@@ -94,7 +94,12 @@ export default function Header({
   }, [navigate]);
   const onLoginOrRegister = useCallback(async () => {
     setLoading(true);
-    await fcl.authenticate();
+    const { loggedIn } = await fcl.currentUser.snapshot();
+    if (loggedIn) {
+      navigate('/register');
+    } else {
+      await fcl.authenticate();
+    }
     setLoading(false);
   }, [navigate, setLoading]);
   const onCreate = useCallback(() => {
