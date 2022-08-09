@@ -18,6 +18,9 @@ export interface DuanjiIPFS {
   content: string
   imageHashes: string[]
   createdAt: string
+  image: string
+  name: string
+  description: string
 }
 
 export type Duanji = DuanjiIPFS & DuanjiResource

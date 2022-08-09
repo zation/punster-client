@@ -265,7 +265,7 @@ transaction () {
 
 export const readOne = async (address: string | null | undefined): Promise<Punster | undefined> => {
   if (!address) {
-    return null;
+    return undefined;
   }
   const resource = await fcl.query({
     cadence: `

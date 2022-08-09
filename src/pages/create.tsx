@@ -23,6 +23,7 @@ import {
   split,
 } from 'lodash/fp';
 import { useNavigate } from 'umi';
+import { ipfsDomain } from '@/services/ipfs';
 
 const { Item } = Form;
 const { TextArea } = Input;
@@ -42,13 +43,17 @@ export default function Create() {
   const onSubmit = useCallback(async ({ title, content, images, isAdvertisement }: Values) => {
     setSubmitting(true)
     try {
+      const imageHashes = flow(
+        prop('fileList'),
+        map(prop('response.Hash')),
+      )(images);
       await dispatch(create({
+        name: title,
+        description: content,
         title,
         content,
-        imageHashes: flow(
-          prop('fileList'),
-          map(prop('response.Hash')),
-        )(images),
+        imageHashes,
+        image: `${ipfsDomain}:8080/ipfs/${imageHashes[0]}`,
         createdAt: new Date().toISOString(),
         isAdvertisement,
       })).unwrap();
