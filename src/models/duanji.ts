@@ -78,8 +78,8 @@ export interface CreateParams extends DuanjiIPFS {
 
 export const create = createAsyncThunk(
   `${namespace}/create`,
-  async ({ title, content, imageHashes, createdAt, isAdvertisement }: CreateParams) => {
-    const { Hash } = await uploadJSON<DuanjiIPFS>({ title, content, imageHashes, createdAt });
+  async ({ title, content, imageHashes, createdAt, isAdvertisement, description, image, name }: CreateParams) => {
+    const { Hash } = await uploadJSON<DuanjiIPFS>({ title, content, imageHashes, createdAt, description, image, name });
     if (isAdvertisement) {
       await createAdertisementService('', Hash);
       const duanjis = readMineService();
