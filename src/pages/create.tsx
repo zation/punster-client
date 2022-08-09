@@ -53,7 +53,7 @@ export default function Create() {
         title,
         content,
         imageHashes,
-        image: `${ipfsDomain}:8080/ipfs/${imageHashes[0]}`,
+        image: `http:${ipfsDomain}:8080/ipfs/${imageHashes[0]}`,
         createdAt: new Date().toISOString(),
         isAdvertisement,
       })).unwrap();
