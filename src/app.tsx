@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import * as fcl from '@onflow/fcl';
 import { Provider } from 'react-redux';
 import store from '@/models/store';
+import { history } from 'umi';
 import {
   readMine,
   readAll,
@@ -12,6 +13,7 @@ import {
 } from '@/models/duanji';
 // @ts-ignore
 import { send as httpSend } from '@onflow/transport-http'
+import { isRejected } from '@reduxjs/toolkit';
 
 const { dispatch } = store;
 
@@ -22,20 +24,18 @@ fcl.config({
   'sdk.transport': httpSend,
 });
 
-const preload = () => Promise.all([
-  dispatch(readMine()),
-  dispatch(readMineDuanji()),
-  dispatch(readFollowingDuanji()),
-]);
-
 fcl.currentUser.subscribe(async (user) => {
   if (user.loggedIn) {
-    preload();
+    const action = dispatch(readMine());
+    if (isRejected(action)) {
+      history.push('/register');
+    }
+    dispatch(readMineDuanji());
+    dispatch(readFollowingDuanji());
   }
 });
 
 dispatch(readAll());
-preload();
 
 export function rootContainer(container: ReactNode[]) {
   return (

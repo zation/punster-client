@@ -25,7 +25,6 @@ import {
 } from '@/models/auth';
 import {
   destroy,
-  readMine,
   createStarPort,
   receive,
   transfer,
@@ -37,7 +36,6 @@ import {
 import Avatar from '@/components/avatar';
 import Punster from '@/components/punster';
 import * as fcl from '@onflow/fcl'
-import { isRejected } from '@reduxjs/toolkit';
 import { MenuOutlined } from '@ant-design/icons';
 import {
   map,
@@ -97,12 +95,6 @@ export default function Header({
   const onLoginOrRegister = useCallback(async () => {
     setLoading(true);
     await fcl.authenticate();
-    const action = await dispatch(readMine());
-    if (isRejected(action)) {
-      navigate('/register');
-    } else {
-      message.success('Login success.');
-    }
     setLoading(false);
   }, [navigate, setLoading]);
   const onCreate = useCallback(() => {
