@@ -1,4 +1,4 @@
-export const ipfsDomain = '//47.242.71.251'
+export const ipfsDomain = '//47.241.69.26'
 
 export async function uploadJSON<Params = Record<string, any>>(data: Params) {
   const formData = new FormData()
